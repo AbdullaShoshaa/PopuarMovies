@@ -9,5 +9,7 @@
     <string name="sorting_option_dialogmessage">Use one of the sorting options to view movies either by Highest-rated or Most Popular.</string>
     <string name="sorting_option_defaultvalue">popularity.desc</string>
     <string name="settings_activity_label">Settings</string>
+    <string name="notconnected_message">We can\'t reach the server,Please check you\'re connectivity</string>
+    <string name="notconnected_dialog_title">You\'re Not Connected :\'(</string>
 
 </resources>

@@ -1,12 +1,17 @@
 package com.fedaros.www.popularmovies;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,8 +62,8 @@ public class MainActivityFragment extends Fragment {
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(),DetailsActivity.class);
-                intent.putExtra("MovieItem",moviesReadyList.get(position));
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra("MovieItem", moviesReadyList.get(position));
                 getActivity().startActivity(intent);
             }
         });
@@ -77,7 +82,31 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateMovies();
+        if(isOnline())
+            updateMovies();
+        else
+            alertNotOnline();
+    }
+    //show simple dialog to tell the user that he/she is not connected to the internet.
+    private void alertNotOnline(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getActivity().getString(R.string.notconnected_message))
+                .setTitle(getActivity().getString(R.string.notconnected_dialog_title)).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //do nothing.
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    //check if user online. find this answer http://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-timeouts
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
     //AsyncTask to pull movies data from TheMovieDB.com API
     private class FetchMovieInfo extends AsyncTask<String,Void,String> {
@@ -194,6 +223,7 @@ public class MainActivityFragment extends Fragment {
             }
         }
     }
+
 }
 
 
