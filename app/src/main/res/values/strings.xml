@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="sort_option_key">sort</string>
+    <string name="sorting_option_title">Sorted by</string>
+    <string name="sorting_option_dialogtitle">Sorted by</string>
+    <string name="sorting_option_dialogmessage">Use one of the sorting options to view movies either by Highest-rated or Most Popular.</string>
+    <string name="sorting_option_defaultvalue">popularity.desc</string>
+    <string name="settings_activity_label">Settings</string>
+
+</resources>
