@@ -14,14 +14,16 @@ import com.squareup.picasso.Picasso;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * A placeholder fragment containing views to show Movie cover, title, release date, vote rate and overview.
  */
 public class DetailsActivityFragment extends Fragment {
 
     private ImageView movieCover;
     private TextView title,overview,vote,releaseDate;
+    private Movie movieObject;
+
     public DetailsActivityFragment() {
-        setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -34,8 +36,9 @@ public class DetailsActivityFragment extends Fragment {
         overview = (TextView) view.findViewById(R.id.movie_overview);
         vote = (TextView) view.findViewById(R.id.movie_votes);
         releaseDate = (TextView) view.findViewById(R.id.movie_release_date);
-        Movie movieObject = intent.getParcelableExtra("MovieItem");
+        movieObject = intent.getParcelableExtra("MovieItem");
 
+        //if Picasso fails to get images just set ic_launcher as image.
         try{
             Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185"+movieObject.getMovieThumbnail()).into(movieCover);
 

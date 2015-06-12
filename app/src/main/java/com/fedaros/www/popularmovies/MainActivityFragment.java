@@ -31,15 +31,18 @@ import java.util.ArrayList;
 
 
 /**
- * A placeholder fragment containing a simple view.
+ * A placeholder fragment containing Movies thumbnails List as GridView.
  */
 public class MainActivityFragment extends Fragment {
 
+    //ArrayList will hold Movie Objects generated in AsynTask.
     public ArrayList<Movie> moviesReadyList ;
+    //GridView hold movies thumbnails.
     private GridView moviesGrid ;
-    ThumbnailsAdapter thumbnailsAdapter;
+    //Custom Adapter to generate movies thumbnails and poulates them in GridView.
+    private ThumbnailsAdapter thumbnailsAdapter;
     public MainActivityFragment() {
-        this.setHasOptionsMenu(true);
+
     }
 
 
@@ -50,7 +53,6 @@ public class MainActivityFragment extends Fragment {
         moviesGrid = (GridView) view.findViewById(R.id.movies_gridview);
         moviesReadyList = new ArrayList<>();
         thumbnailsAdapter = new ThumbnailsAdapter(getActivity(),moviesReadyList);
-        //thumbnailsAdapter.notifyDataSetChanged();
         moviesGrid.setAdapter(thumbnailsAdapter);
         moviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,10 +64,12 @@ public class MainActivityFragment extends Fragment {
         });
         return view;
     }
-
+    //updates the GridView Adapter with Movies items.
     private void updateMovies(){
+        //get sorting option from SharedPreferences.
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortValue = settings.getString(getString(R.string.sort_option_key),getString(R.string.sorting_option_defaultvalue));
+        //execute fetchMoviesInfo from API.
         FetchMovieInfo task =new FetchMovieInfo();
         task.execute(sortValue);
     }
@@ -75,11 +79,11 @@ public class MainActivityFragment extends Fragment {
         super.onStart();
         updateMovies();
     }
-
+    //AsyncTask to pull movies data from TheMovieDB.com API
     private class FetchMovieInfo extends AsyncTask<String,Void,String> {
         final private String LOG_TAG = FetchMovieInfo.class.getSimpleName();
         private ArrayList<Movie> moviesList;
-
+        //a method takes JSON resault as String and stores it in Mvies Object, add them to ArrayList and returns the ArrayList.
         private ArrayList<Movie> getMovieInfoAsList(String jsonString)throws JSONException{
 
             JSONObject fullObject = new JSONObject(jsonString);
@@ -100,14 +104,6 @@ public class MainActivityFragment extends Fragment {
             return moviesList;
         }
 
-        /*private String[] getThumbnailURLs(ArrayList<Movie> list){
-            String[] thumbnailArray = new String[list.size()];
-            for(int i=0;i<list.size();i++){
-                thumbnailArray[i]=list.get(i).getMovieThumbnail();
-            }
-
-            return thumbnailArray;
-        }*/
         @Override
         protected String doInBackground(String... params) {
 
@@ -123,21 +119,18 @@ public class MainActivityFragment extends Fragment {
             try {
                 final String MOVIE_BASE_URL =
                         "http://api.themoviedb.org/3/discover/movie?";
-
                 final String SORT_PARAM = "sort_by";
                 final String API_KEY_PARAM = "api_key";
-
-
+                final String API_KEY = "818b4fa1efcc19d0a512cc15d1a706e0";
+                //construct a URL with required parameters.
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendQueryParameter(SORT_PARAM, params[0])
-                        .appendQueryParameter(API_KEY_PARAM, "818b4fa1efcc19d0a512cc15d1a706e0")
+                        .appendQueryParameter(API_KEY_PARAM, API_KEY)
                         .build();
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are available at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
+
                 URL url = new URL(builtUri.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
+                // Create the request to themoviedb.com API, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -169,7 +162,7 @@ public class MainActivityFragment extends Fragment {
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
+                // If the code didn't successfully get the movies data, there's no point in attempting
                 // to parse it.
                 movieInfoString = null;
             }finally {
@@ -192,13 +185,9 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             try {
+                //reset Movie Objects in Adapter
                 moviesReadyList.clear();
                 moviesReadyList.addAll(getMovieInfoAsList(s));
-                for(int i=0;i<moviesReadyList.size();i++)
-                    Log.d(LOG_TAG, moviesReadyList.get(i).getMovieTitle());
-
-
-                Log.d(LOG_TAG, thumbnailsAdapter.getCount()+"§");
                 thumbnailsAdapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();

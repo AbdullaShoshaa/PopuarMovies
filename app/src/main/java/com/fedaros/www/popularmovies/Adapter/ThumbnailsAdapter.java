@@ -1,7 +1,6 @@
 package com.fedaros.www.popularmovies.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -19,18 +18,16 @@ import java.util.ArrayList;
 public class ThumbnailsAdapter extends BaseAdapter{
     private String LOG_TAG = ThumbnailsAdapter.class.getSimpleName();
     private ArrayList<Movie> moviesList;
-    Context mContext;
+    private Context mContext;
 
     public ThumbnailsAdapter(Context context,ArrayList<Movie> list) {
 
         this.moviesList = list;
         this.mContext = context;
-        Log.d(LOG_TAG,"ArrayList Inside Adapter: count "+moviesList.size());
     }
 
     @Override
     public int getCount() {
-        Log.d(LOG_TAG,"getCount() "+moviesList.size());
         return moviesList.size();
     }
 
@@ -49,18 +46,14 @@ public class ThumbnailsAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView thumbnail ;
 
-        //LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
         if(convertView == null){
             thumbnail = new ImageView(mContext);
-            //thumbnail.setLayoutParams(new GridView.LayoutParams(200, 400));
             thumbnail.setMinimumWidth(200);
             thumbnail.setMinimumHeight(800);
             thumbnail.setScaleType(ImageView.ScaleType.FIT_XY);
             thumbnail.setPadding(5, 5, 5, 5);
-            Log.d(LOG_TAG,"Image "+position+" has been set");
         }else{
             thumbnail = (ImageView) convertView;
-            Log.d(LOG_TAG, "Image " + position + " has been set");
         }
         thumbnail.setImageResource(R.mipmap.ic_launcher);
         try{
